@@ -28,8 +28,7 @@
 
 namespace Ariadne {
 
-  HybridIOAutomaton getSystem()
-  {
+  HybridIOAutomaton getSystem() {
 
     // Integer that counts the tanks.
     int tank_counter = 0;
@@ -42,6 +41,8 @@ namespace Ariadne {
     int tank_number = 3;
     // Number of the valves.
     int valve_number = 3;
+    // Number of the controllers.
+    int controller_number = 3;
 
     // 0: System variables
 
@@ -53,16 +54,6 @@ namespace Ariadne {
       waterlevels.push_back(RealVariable("waterLevel" + Ariadne::to_string(k)));
     }
 
-    //std::vector<int>::iterator iterator_waterlevels = waterlevels.begin();
-
-    cout << waterlevels << endl;
-
-    /*
-    RealVariable waterLevel0("waterLevel0");
-    RealVariable waterLevel1("waterLevel1");
-    RealVariable waterLevel2("waterLevel2");
-    */
-
     // Creo le variabili per l'apertura delle valvole.
 
     std::vector<RealVariable> valvelevels;
@@ -71,68 +62,61 @@ namespace Ariadne {
       valvelevels.push_back(RealVariable("valveLevel" + Ariadne::to_string(k)));
     }
 
-    /*
-    RealVariable valveLevel0("valveLevel0");
-    RealVariable valveLevel1("valveLevel1");
-    RealVariable valveLevel2("valveLevel2");
-    */
-
     /// Tank automaton
 
     // 0: Parametri
 
+    // Creo il vettore per i parametri di input delle tank superiori.
+    std::vector<RealParameter> upperflows;
+
+    // Creo il vettore per le tank.
+    std::vector<HybridIOAutomaton> tanks;
+
     // Ingresso dell'entrata della watertank #w0, costante.
-    RealParameter w0in("w0in",0.5);
+    upperflows.push_back(RealParameter("w0in",0.5));
     // Ingresso dell'entrata della watertank #w1, costante.
-    RealParameter w1in("w1in",0.5);
+    upperflows.push_back(RealParameter("w1in",0.5));
     // Uscita delle tank.
-    RealParameter tankOutputFlow0("tankOutputFlow0",0.04);
-    RealParameter tankOutputFlow1("tankOutputFlow1",0.04);
-    RealParameter tankOutputFlow2("tankOutputFlow2",0.04);
 
-    // for (int k = 1; k <= 2; k++){
-    // Provo a creare le due side_tank con la mia funzione.
-    HybridIOAutomaton side_tank_0 = Ariadne::getSideTank(
-      //"side_tank_0",
-      waterlevels.at(0),
-      valvelevels.at(0),
-      valvelevels.at(2),
-      w0in,
-      tankOutputFlow0,
-      // This int represents the number of this tank.
-      tank_counter
-    );
+    // Crep il vettore per i parametri di uscita.
+    std::vector<RealParameter> lowerflows;
 
-    tank_counter++;
-    //iterator_waterlevels++;
+    lowerflows.push_back(RealParameter("tankOutputFlow0",0.04));
+    lowerflows.push_back(RealParameter("tankOutputFlow1",0.04));
+    lowerflows.push_back(RealParameter("tankOutputFlow2",0.04));
 
-    HybridIOAutomaton side_tank_1 = Ariadne::getSideTank(
-      //"side_tank_1",
-      waterlevels.at(1),
-      valvelevels.at(1),
-      valvelevels.at(2),
-      w1in,
-      tankOutputFlow1,
-      // This int represents the number of this tank.
-      tank_counter
-    );
-
-    tank_counter++;
+    for (int k = 0; k < 2; k++){
+      // Provo a creare le due side_tank con la mia funzione.
+      HybridIOAutomaton local_tank = Ariadne::getSideTank(
+        //"side_tank_0",
+        waterlevels.at(k),
+        valvelevels.at(k),
+        valvelevels.at(2),
+        upperflows.at(k),
+        lowerflows.at(k),
+        // This int represents the number of this tank.
+        tank_counter
+      );
+      tanks.push_back(local_tank);
+      tank_counter++;
+    }
 
     // Provo a creare una bottom_tank con la mia funzione.
     HybridIOAutomaton real_bottom_tank = Ariadne::getBottomTank(
-      //"real_bottom_tank",
       waterlevels.at(2),
       waterlevels.at(0),
       waterlevels.at(1),
       valvelevels.at(2),
-      tankOutputFlow0,
-      tankOutputFlow1,
-      tankOutputFlow2,
+      lowerflows.at(0),
+      lowerflows.at(1),
+      lowerflows.at(2),
       // This int represents the number of this tank.
       tank_counter
     );
-      /// Valve automaton
+
+    tanks.push_back(real_bottom_tank);
+
+    /// Valve automaton
 
     // 0. Parameters
 
@@ -140,41 +124,24 @@ namespace Ariadne {
 
     // 1. Automaton
 
+    std::vector<HybridIOAutomaton> valves;
+
     // Creo tre valvole con la funzione getValve.
 
-    HybridIOAutomaton external_valve_0 = Ariadne::getValve(
-      "external_valve_0",
-      // Valve's opening time.
-      T,
-      // Valve's opening level.
-      valvelevels.at(0),
-      // This int represents the number of this component.
-      valve_counter
-    );
+    for (int k = 0; k < valve_number; k++){
 
-    valve_counter++;
+      HybridIOAutomaton valve = Ariadne::getValve(
+        // Valve's opening time.
+        T,
+        // Valve's opening level.
+        valvelevels.at(k),
+        // This int represents the number of this component.
+        valve_counter
+      );
+      valves.push_back(valve);
+      valve_counter++;
 
-    HybridIOAutomaton external_valve_1 = Ariadne::getValve(
-      "external_valve_1",
-      // Valve's opening time.
-      T,
-      // Valve's opening level.
-      valvelevels.at(1),
-      // This int represents the number of this component.
-      valve_counter
-    );
-
-    valve_counter++;
-
-    HybridIOAutomaton external_valve_2 = Ariadne::getValve(
-      "external_valve_2",
-      // Valve's opening time.
-      T,
-      // Valve's opening level.
-      valvelevels.at(2),
-      // This int represents the number of this component.
-      valve_counter
-    );
+    }
 
     /// Controller automaton
 
@@ -185,62 +152,49 @@ namespace Ariadne {
     RealParameter hmax("hmax",7.75); // Upper threshold
     RealParameter delta("delta",0.002); // Indetermination constant
 
-    HybridIOAutomaton external_controller_0 = Ariadne::getController(
-      "external_controller_0",
-      // Controlled tank's waterlevel.
-      waterlevels.at(0),
-      hmin,hmax,delta,
-      // Controlled tank's valve
-      external_valve_0,
-      // This int represents the number of this component.
-      controller_counter
-    );
+    // 1. Automata
 
-    controller_counter++;
+    std::vector<HybridIOAutomaton> controllers;
 
-    HybridIOAutomaton external_controller_1 = Ariadne::getController(
-      "external_controller_1",
-      // Controlled tank's waterlevel.
-      waterlevels.at(1),
-      hmin,hmax,delta,
-      // Controlled tank's valve
-      external_valve_1,
-      // This int represents the number of this component.
-      controller_counter
-    );
+    // Creo tre valvole con la funzione getValve.
 
-    controller_counter++;
+    for (int k = 0; k < controller_number; k++){
 
-    HybridIOAutomaton external_controller_2 = Ariadne::getController(
-      "external_controller_2",
-      // Controlled tank's waterlevel.
-      waterlevels.at(2),
-      hmin,hmax,delta,
-      // Controlled tank's valve
-      external_valve_2,
-      // This int represents the number of this component.
-      controller_counter
-    );
+      HybridIOAutomaton controller = Ariadne::getController(
+        // Controlled tank's waterlevel.
+        waterlevels.at(k),
+        hmin,hmax,delta,
+        // Controlled tank's valve
+        valves.at(k),
+        // This int represents the number of this component.
+        controller_counter
+      );
+      controllers.push_back(controller);
+      controller_counter++;
+
+    }
 
     // Compongo la tripletta modulare #0.
-    HybridIOAutomaton semimodule0 = compose("side_tank_0,external_valve_0",side_tank_0,external_valve_0,DiscreteLocation("flow0"),DiscreteLocation("idle_0"));
-    HybridIOAutomaton module0 = compose("module0",semimodule0,external_controller_0,DiscreteLocation("flow0,idle_0"),DiscreteLocation("rising0"));
+    HybridIOAutomaton semimodule0 = compose("side_tank_0,external_valve_0",tanks.at(0),valves.at(0),DiscreteLocation("flow0"),DiscreteLocation("idle_0"));
+    HybridIOAutomaton module0 = compose("module0",semimodule0,controllers.at(0),DiscreteLocation("flow0,idle_0"),DiscreteLocation("rising0"));
     // Compongo la tripletta modulare #1.
-    HybridIOAutomaton semimodule1 = compose("side_tank_1,external_valve_1",side_tank_1,external_valve_1,DiscreteLocation("flow1"),DiscreteLocation("idle_1"));
-    HybridIOAutomaton module1 = compose("module1",semimodule1,external_controller_1,DiscreteLocation("flow1,idle_1"),DiscreteLocation("rising1"));
+    HybridIOAutomaton semimodule1 = compose("side_tank_1,external_valve_1",tanks.at(1),valves.at(1),DiscreteLocation("flow1"),DiscreteLocation("idle_1"));
+    HybridIOAutomaton module1 = compose("module1",semimodule1,controllers.at(1),DiscreteLocation("flow1,idle_1"),DiscreteLocation("rising1"));
     // Compongo la tripletta modulare #0.
-    HybridIOAutomaton semimodule2 = compose("real_bottom_tank,external_valve_0",real_bottom_tank,external_valve_2,DiscreteLocation("flow2"),DiscreteLocation("idle_2"));
-    HybridIOAutomaton module2 = compose("module2",semimodule2,external_controller_2,DiscreteLocation("flow2,idle_2"),DiscreteLocation("rising2"));
+    HybridIOAutomaton semimodule2 = compose("real_bottom_tank,external_valve_0",tanks.at(2),valves.at(2),DiscreteLocation("flow2"),DiscreteLocation("idle_2"));
+    HybridIOAutomaton module2 = compose("module2",semimodule2,controllers.at(2),DiscreteLocation("flow2,idle_2"),DiscreteLocation("rising2"));
     // Compongo i tre automi.
     HybridIOAutomaton semimodulesystem = compose("semimodulesystem",module0,module1,DiscreteLocation("flow0,idle_0,rising0"),DiscreteLocation("flow1,idle_1,rising1"));
     HybridIOAutomaton modulesystem = compose("modulesystem",semimodulesystem,module2,DiscreteLocation("flow0,idle_0,rising0,flow1,idle_1,rising1"),DiscreteLocation("flow2,idle_2,rising2"));
 
-    // Con questa stampa vedo che l'unica differenza con il vecchio automa composto è il nome.
-
+    /*
     ofstream myfile;
     myfile.open ("newfashionsystem.txt");
     myfile << modulesystem;
     myfile.close();
+    */
+
+    // cout << modulesystem << endl;
 
     return modulesystem;
 

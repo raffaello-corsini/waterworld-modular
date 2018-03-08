@@ -16,9 +16,6 @@
 #define TUTORIAL_SYSTEM_H_
 */
 
-// Including this library to work with strings.
-// #include <string>
-
 #include <ariadne.h>
 
 namespace Ariadne {
@@ -31,32 +28,30 @@ namespace Ariadne {
 
   // Posso passargli un automa? O meglio passargli solo la variabile?
   HybridIOAutomaton getSideTank(
-    // String label,
     RealVariable internal_waterlevel,
     RealVariable upper_valvelevel,
     RealVariable lower_valvelevel,
     RealParameter upper_input_flow,
     RealParameter lower_output_flow,
-    // This int represents the number of this component.
     int progressive)
-  {
-    // Creation of the automaton, with the assigned label.
-    HybridIOAutomaton tank("tank" + Ariadne::to_string(progressive));
+    {
+      // Creation of the automaton, with the assigned label.
+      HybridIOAutomaton tank("tank" + Ariadne::to_string(progressive));
 
-    // Adding the input/output vars.
-    tank.add_input_var(upper_valvelevel);
-    tank.add_output_var(internal_waterlevel);
+      // Adding the input/output vars.
+      tank.add_input_var(upper_valvelevel);
+      tank.add_output_var(internal_waterlevel);
 
-    // Creation of the location.
-    DiscreteLocation side_tank_flow("flow" + Ariadne::to_string(progressive));
-    // Adding the location to the automaton.
-    tank.new_mode(side_tank_flow);
+      // Creation of the location.
+      DiscreteLocation side_tank_flow("flow" + Ariadne::to_string(progressive));
+      // Adding the location to the automaton.
+      tank.new_mode(side_tank_flow);
 
-    // Setting the dynamics
-    tank.set_dynamics(side_tank_flow, internal_waterlevel,
-      - lower_output_flow *  ( lower_valvelevel / 2 ) * internal_waterlevel + upper_input_flow * upper_valvelevel);
+      // Setting the dynamics
+      tank.set_dynamics(side_tank_flow, internal_waterlevel,
+        - lower_output_flow *  ( lower_valvelevel / 2 ) * internal_waterlevel + upper_input_flow * upper_valvelevel);
 
-      return tank;
+        return tank;
+      }
+
     }
-
-  }

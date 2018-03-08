@@ -25,7 +25,7 @@ namespace Ariadne {
   // Posso passargli un automa? O meglio passargli solo la variabile?
   HybridIOAutomaton getController(
     // Controller's label.
-    String label,
+    // String label,
     // Controlled tank's waterlevel.
     RealVariable waterlevel,
     // Parameter hmin, hmax, delta for the analysis.
@@ -39,7 +39,7 @@ namespace Ariadne {
     {
 
       // 1. Automaton
-      HybridIOAutomaton controller(label);
+      HybridIOAutomaton controller("controller" + Ariadne::to_string(progressive));
 
       // 2. Registration of the input/output variables
       controller.add_input_var(waterlevel);

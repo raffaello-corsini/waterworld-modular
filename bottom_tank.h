@@ -30,7 +30,6 @@ namespace Ariadne {
   */
 
   HybridIOAutomaton getBottomTank(
-    // String label,
     RealVariable internal_waterlevel,
     RealVariable upper_left_waterlevel,
     RealVariable upper_right_waterlevel,
@@ -38,35 +37,33 @@ namespace Ariadne {
     RealParameter upper_left_output_flow,
     RealParameter upper_right_output_flow,
     RealParameter lower_output_flow,
-    // This int represents the number of this component.
-    int progressive
-  )
-  {
-    // Creation of the automaton, with the assigned label.
-    HybridIOAutomaton tank("tank" + Ariadne::to_string(progressive));
+    int progressive)
+    {
+      // Creation of the automaton, with the assigned label.
+      HybridIOAutomaton tank("tank" + Ariadne::to_string(progressive));
 
-    // Adding the input/output vars.
-    tank.add_input_var(upper_valvelevel);
-    tank.add_input_var(upper_left_waterlevel);
-    tank.add_input_var(upper_right_waterlevel);
+      // Adding the input/output vars.
+      tank.add_input_var(upper_valvelevel);
+      tank.add_input_var(upper_left_waterlevel);
+      tank.add_input_var(upper_right_waterlevel);
 
-    tank.add_output_var(internal_waterlevel);
+      tank.add_output_var(internal_waterlevel);
 
-    // Creation of the location.
-    DiscreteLocation bottom_tank_flow("flow" + Ariadne::to_string(progressive));
-    // Adding the location to the automaton.
-    tank.new_mode(bottom_tank_flow);
+      // Creation of the location.
+      DiscreteLocation bottom_tank_flow("flow" + Ariadne::to_string(progressive));
+      // Adding the location to the automaton.
+      tank.new_mode(bottom_tank_flow);
 
-    // Setting the dynamics
-    tank.set_dynamics(bottom_tank_flow, internal_waterlevel,
-      // What goes out.
-      - lower_output_flow * internal_waterlevel // * valveLevelEnd
-      // What comes in from the upper left tank.
-      + upper_left_output_flow * ( upper_valvelevel / 2 ) * upper_left_waterlevel
-      // What comes in from the upper right tank.
-      + upper_right_output_flow * ( upper_valvelevel / 2 ) * upper_right_waterlevel);
+      // Setting the dynamics
+      tank.set_dynamics(bottom_tank_flow, internal_waterlevel,
+        // What goes out.
+        - lower_output_flow * internal_waterlevel // * valveLevelEnd
+        // What comes in from the upper left tank.
+        + upper_left_output_flow * ( upper_valvelevel / 2 ) * upper_left_waterlevel
+        // What comes in from the upper right tank.
+        + upper_right_output_flow * ( upper_valvelevel / 2 ) * upper_right_waterlevel);
 
-      return tank;
+        return tank;
+      }
+
     }
-
-  }

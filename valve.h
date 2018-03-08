@@ -24,7 +24,7 @@ namespace Ariadne {
 
   // Posso passargli un automa? O meglio passargli solo la variabile?
   HybridIOAutomaton getValve(
-    String label,
+    // String label,
     // Valve's opening time.
     RealParameter opening_time,
     // Valve's opening level.
@@ -35,7 +35,7 @@ namespace Ariadne {
 
       // 1. Automaton
 
-      HybridIOAutomaton valve(label);
+      HybridIOAutomaton valve("valve" + Ariadne::to_string(progressive));
 
       // 2. Registration of the input/output variables
 
