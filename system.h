@@ -38,19 +38,44 @@ namespace Ariadne {
     // Integer that counts the controllers.
     int controller_counter = 0;
 
+    // Number of the tanks.
+    int tank_number = 3;
+    // Number of the valves.
+    int valve_number = 3;
+
     // 0: System variables
 
     // Creo le variabili per i livelli d'acqua.
 
+    std::vector<RealVariable> waterlevels;
+
+    for (int k = 0; k < tank_number; k++){
+      waterlevels.push_back(RealVariable("waterLevel" + Ariadne::to_string(k)));
+    }
+
+    //std::vector<int>::iterator iterator_waterlevels = waterlevels.begin();
+
+    cout << waterlevels << endl;
+
+    /*
     RealVariable waterLevel0("waterLevel0");
     RealVariable waterLevel1("waterLevel1");
     RealVariable waterLevel2("waterLevel2");
+    */
 
-    // RealVariable waterlevel_array[3] = { RealVariable abc("abc"),"b","c"};
+    // Creo le variabili per l'apertura delle valvole.
 
+    std::vector<RealVariable> valvelevels;
+
+    for (int k = 0; k < valve_number; k++){
+      valvelevels.push_back(RealVariable("valveLevel" + Ariadne::to_string(k)));
+    }
+
+    /*
     RealVariable valveLevel0("valveLevel0");
     RealVariable valveLevel1("valveLevel1");
     RealVariable valveLevel2("valveLevel2");
+    */
 
     /// Tank automaton
 
@@ -65,12 +90,13 @@ namespace Ariadne {
     RealParameter tankOutputFlow1("tankOutputFlow1",0.04);
     RealParameter tankOutputFlow2("tankOutputFlow2",0.04);
 
+    // for (int k = 1; k <= 2; k++){
     // Provo a creare le due side_tank con la mia funzione.
     HybridIOAutomaton side_tank_0 = Ariadne::getSideTank(
-      "side_tank_0",
-      waterLevel0,
-      valveLevel0,
-      valveLevel2,
+      //"side_tank_0",
+      waterlevels.at(0),
+      valvelevels.at(0),
+      valvelevels.at(2),
       w0in,
       tankOutputFlow0,
       // This int represents the number of this tank.
@@ -78,12 +104,13 @@ namespace Ariadne {
     );
 
     tank_counter++;
+    //iterator_waterlevels++;
 
     HybridIOAutomaton side_tank_1 = Ariadne::getSideTank(
-      "side_tank_1",
-      waterLevel1,
-      valveLevel1,
-      valveLevel2,
+      //"side_tank_1",
+      waterlevels.at(1),
+      valvelevels.at(1),
+      valvelevels.at(2),
       w1in,
       tankOutputFlow1,
       // This int represents the number of this tank.
@@ -94,11 +121,11 @@ namespace Ariadne {
 
     // Provo a creare una bottom_tank con la mia funzione.
     HybridIOAutomaton real_bottom_tank = Ariadne::getBottomTank(
-      "real_bottom_tank",
-      waterLevel2,
-      waterLevel0,
-      waterLevel1,
-      valveLevel2,
+      //"real_bottom_tank",
+      waterlevels.at(2),
+      waterlevels.at(0),
+      waterlevels.at(1),
+      valvelevels.at(2),
       tankOutputFlow0,
       tankOutputFlow1,
       tankOutputFlow2,
@@ -120,7 +147,7 @@ namespace Ariadne {
       // Valve's opening time.
       T,
       // Valve's opening level.
-      valveLevel0,
+      valvelevels.at(0),
       // This int represents the number of this component.
       valve_counter
     );
@@ -132,7 +159,7 @@ namespace Ariadne {
       // Valve's opening time.
       T,
       // Valve's opening level.
-      valveLevel1,
+      valvelevels.at(1),
       // This int represents the number of this component.
       valve_counter
     );
@@ -144,7 +171,7 @@ namespace Ariadne {
       // Valve's opening time.
       T,
       // Valve's opening level.
-      valveLevel2,
+      valvelevels.at(2),
       // This int represents the number of this component.
       valve_counter
     );
@@ -161,7 +188,7 @@ namespace Ariadne {
     HybridIOAutomaton external_controller_0 = Ariadne::getController(
       "external_controller_0",
       // Controlled tank's waterlevel.
-      waterLevel0,
+      waterlevels.at(0),
       hmin,hmax,delta,
       // Controlled tank's valve
       external_valve_0,
@@ -174,7 +201,7 @@ namespace Ariadne {
     HybridIOAutomaton external_controller_1 = Ariadne::getController(
       "external_controller_1",
       // Controlled tank's waterlevel.
-      waterLevel1,
+      waterlevels.at(1),
       hmin,hmax,delta,
       // Controlled tank's valve
       external_valve_1,
@@ -187,7 +214,7 @@ namespace Ariadne {
     HybridIOAutomaton external_controller_2 = Ariadne::getController(
       "external_controller_2",
       // Controlled tank's waterlevel.
-      waterLevel2,
+      waterlevels.at(2),
       hmin,hmax,delta,
       // Controlled tank's valve
       external_valve_2,

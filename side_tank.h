@@ -9,22 +9,6 @@
 ****************************************************************************/
 
 /*
-*  This program is free software; you can redistribute it and/or modify
-*  it under the terms of the GNU General Public License as published by
-*  the Free Software Foundation; either version 2 of the License, or
-*  (at your option) any later version.
-*
-*  This program is distributed in the hope that it will be useful,
-*  but WITHOUT ANY WARRANTY; without even the implied warranty of
-*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-*  GNU Library General Public License for more details.
-*
-*  You should have received a copy of the GNU General Public License
-*  along with this program; if not, write to the Free Software
-*  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/
-
-/*
 #ifndef SIDE_TANK_H_
 #define SIDE_TANK_H_
 
@@ -45,21 +29,19 @@ namespace Ariadne {
   *  the upper_valvelevel, the two upper_output_flow and its internal_output_flow.
   */
 
-
   // Posso passargli un automa? O meglio passargli solo la variabile?
   HybridIOAutomaton getSideTank(
-    String label,
+    // String label,
     RealVariable internal_waterlevel,
     RealVariable upper_valvelevel,
     RealVariable lower_valvelevel,
     RealParameter upper_input_flow,
     RealParameter lower_output_flow,
     // This int represents the number of this component.
-    int progressive
-  )
+    int progressive)
   {
     // Creation of the automaton, with the assigned label.
-    HybridIOAutomaton tank(label);
+    HybridIOAutomaton tank("tank" + Ariadne::to_string(progressive));
 
     // Adding the input/output vars.
     tank.add_input_var(upper_valvelevel);
