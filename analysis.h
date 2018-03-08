@@ -47,12 +47,11 @@ HybridConstraintSet getSafetyConstraint(HybridAutomatonInterface& system);
 void analyse(HybridAutomatonInterface& system, HybridBoundedConstraintSet& initial_set, int verbosity, bool plot_results)
 {
 
-    /*
     cout << "1/6: Finite time upper evolution... " << endl << flush;
     finite_time_upper_evolution(system,initial_set,verbosity,plot_results);
+
     cout << "2/6: Finite time lower evolution... " << endl << flush;
     finite_time_lower_evolution(system,initial_set,verbosity,plot_results);
-    */
 
     /*
     cout << "3/6: Infinite time outer evolution... " << endl << flush;
@@ -77,7 +76,7 @@ HybridEvolver::EnclosureListType _finite_time_evolution(HybridAutomatonInterface
 	// Creates an evolver
     HybridEvolver evolver(system);
     evolver.verbosity = verbosity;
-    evolver.settings().set_maximum_step_size(0.3); // The time step size to be used
+    evolver.settings().set_maximum_step_size(0.6); // The time step size to be used
 
     // Creates a list of initial enclosures from the initial set.
     // This operation is only necessary since we provided an initial set expressed as a constraint set
@@ -91,7 +90,7 @@ HybridEvolver::EnclosureListType _finite_time_evolution(HybridAutomatonInterface
 
     // The maximum evolution time, expressed as a continuous time limit along with a maximum number of events
     // The evolution stops for each trajectory as soon as one of the two limits are reached
-    HybridTime evol_limits(30.0,8);
+    HybridTime evol_limits(8.0,3);
 
     // Performs the evolution, saving only the reached set of the orbit
     HybridEvolver::EnclosureListType result;
