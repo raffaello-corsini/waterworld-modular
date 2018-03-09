@@ -8,10 +8,10 @@
 *  described controller aims at keeping the water level between an upper threshold
 *  and a lower threshold.
 *
-* 	Questo file contiene la definizione del sistema nelle sue variabili e componenti.
+* Questo file contiene la definizione del sistema nelle sue variabili e componenti.
 *  Per altre informazioni si rimanda alla relazione allegata al presente progetto.
 *
-*  Questa è una versione preliminare con 2 flusi d'ingresso, 3 tank e 4 valvole.
+*  Questa è una versione preliminare con 2 flussi d'ingresso, 3 tank e 3 valvole.
 *
 *  Copyright  2018  Raffaello Corsini, Luca Geretti
 *
@@ -129,7 +129,6 @@ namespace Ariadne {
     // Creo tre valvole con la funzione getValve.
 
     for (int k = 0; k < valve_number; k++){
-
       HybridIOAutomaton valve = Ariadne::getValve(
         // Valve's opening time.
         T,
@@ -140,7 +139,6 @@ namespace Ariadne {
       );
       valves.push_back(valve);
       valve_counter++;
-
     }
 
     /// Controller automaton
@@ -159,7 +157,6 @@ namespace Ariadne {
     // Creo tre valvole con la funzione getValve.
 
     for (int k = 0; k < controller_number; k++){
-
       HybridIOAutomaton controller = Ariadne::getController(
         // Controlled tank's waterlevel.
         waterlevels.at(k),
@@ -171,35 +168,100 @@ namespace Ariadne {
       );
       controllers.push_back(controller);
       controller_counter++;
-
     }
 
     // Compongo la tripletta modulare #0.
-    HybridIOAutomaton semimodule0 = compose("side_tank_0,external_valve_0",tanks.at(0),valves.at(0),DiscreteLocation("flow0"),DiscreteLocation("idle_0"));
+    HybridIOAutomaton semimodule0 = compose("tank0,valve0",tanks.at(0),valves.at(0),DiscreteLocation("flow0"),DiscreteLocation("idle_0"));
     HybridIOAutomaton module0 = compose("module0",semimodule0,controllers.at(0),DiscreteLocation("flow0,idle_0"),DiscreteLocation("rising0"));
     // Compongo la tripletta modulare #1.
-    HybridIOAutomaton semimodule1 = compose("side_tank_1,external_valve_1",tanks.at(1),valves.at(1),DiscreteLocation("flow1"),DiscreteLocation("idle_1"));
+    HybridIOAutomaton semimodule1 = compose("tank1,valve1",tanks.at(1),valves.at(1),DiscreteLocation("flow1"),DiscreteLocation("idle_1"));
     HybridIOAutomaton module1 = compose("module1",semimodule1,controllers.at(1),DiscreteLocation("flow1,idle_1"),DiscreteLocation("rising1"));
     // Compongo la tripletta modulare #0.
-    HybridIOAutomaton semimodule2 = compose("real_bottom_tank,external_valve_0",tanks.at(2),valves.at(2),DiscreteLocation("flow2"),DiscreteLocation("idle_2"));
+    HybridIOAutomaton semimodule2 = compose("tank2,valve2",tanks.at(2),valves.at(2),DiscreteLocation("flow2"),DiscreteLocation("idle_2"));
     HybridIOAutomaton module2 = compose("module2",semimodule2,controllers.at(2),DiscreteLocation("flow2,idle_2"),DiscreteLocation("rising2"));
     // Compongo i tre automi.
     HybridIOAutomaton semimodulesystem = compose("semimodulesystem",module0,module1,DiscreteLocation("flow0,idle_0,rising0"),DiscreteLocation("flow1,idle_1,rising1"));
     HybridIOAutomaton modulesystem = compose("modulesystem",semimodulesystem,module2,DiscreteLocation("flow0,idle_0,rising0,flow1,idle_1,rising1"),DiscreteLocation("flow2,idle_2,rising2"));
 
     /*
-    ofstream myfile;
-    myfile.open ("newfashionsystem.txt");
-    myfile << modulesystem;
-    myfile.close();
+    * Provo ora a comporre gli automi. Visto che l'ordine di composizione a
+    * livello teorico è irrilevante dovrei poter farlo unendo i componenti
+    * di ogni tipo alla mano. Provo a vederlo se posso aggiungere in maniera
+    * continuativa ogni elemento. Magari prima aggiungo ogni componente
+    * ad un unico vettore e poi scorro lungo tutto il vettore.
+    *
+    * Però posso anche comporre ogni tripletta e poi unire il tutto.
+    * Soprattutto per questo specifico caso perché si di avere 3-3-3
+    * e potrei rimanere fedele e regolare coi nomi.
     */
 
-    // cout << modulesystem << endl;
+    /*
+    // Composizione per tipo di automa (tank, valvole, controllori).
+    // MA distinti per vettore.
+    for (int k = 0; k < tanks.size(); k++){
 
-    return modulesystem;
+    }
+    for (int k = 0; k < valves.size(); k++){
 
-  }
+    }
+    for (int k = 0; k < controllers.size(); k++){
 
-}
+    }
 
-#endif /* TUTORIAL_SYSTEM_H_ */
+    // Composizione per tipo di automa (tank, valvole, controllori).
+    // MA compressi in un unico vettore in un unico vettore.
+
+
+
+    // Composizione in ordine per tripletta tank-valvola-controllore
+    // Qui tank_number == valve_number == controller_number
+    // Creo il vettore dove salvo gli automi parziali.
+    std::vector<HybridIOAutomaton> modules;
+    // Composizione delle tank_number triplette.
+    for (int k = 0; k < tank_number; k++){
+
+      // Converto k in String.
+      String num = Ariadne::to_string(k);
+
+      // Compongo la tripletta modulare #0.
+
+      HybridIOAutomaton semimodule = compose(
+        "tank" + num +",valve" + num,
+        tanks.at(0),
+        valves.at(0),
+        DiscreteLocation("flow" + num),
+        DiscreteLocation("idle_" + num));
+
+        HybridIOAutomaton module = compose(
+          "module" + num,
+          semimodule,
+          controllers.at(0),
+          DiscreteLocation("flow" + num + ",idle_" + num),
+          DiscreteLocation("rising" + num));
+
+          modules.push_back(module);
+
+        }
+
+        // Composizione dei sottosistemi risultanti.
+        for (int k = 0; k < modules.size(); k++){
+
+        }
+        */
+
+        /*
+        ofstream myfile;
+        myfile.open ("newfashionsystem.txt");
+        myfile << modulesystem;
+        myfile.close();
+        */
+
+        // cout << modulesystem << endl;
+
+        return modulesystem;
+
+      }
+
+    }
+
+    #endif /* TUTORIAL_SYSTEM_H_ */

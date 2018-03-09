@@ -24,8 +24,6 @@ namespace Ariadne {
 
   // Posso passargli un automa? O meglio passargli solo la variabile?
   HybridIOAutomaton getController(
-    // Controller's label.
-    // String label,
     // Controlled tank's waterlevel.
     RealVariable waterlevel,
     // Parameter hmin, hmax, delta for the analysis.
@@ -38,26 +36,19 @@ namespace Ariadne {
     int progressive)
     {
 
+      // Conversion of the progressive integer to a String.
+      String number = Ariadne::to_string(progressive);
+
       // 1. Automaton
-      HybridIOAutomaton controller("controller" + Ariadne::to_string(progressive));
+      HybridIOAutomaton controller("controller" + number);
 
       // 2. Registration of the input/output variables
       controller.add_input_var(waterlevel);
 
       // 3. Registration of the events
 
-      /*
-      * Qui arriva il grosso dubbio: come si prendono gli eventi?
-      * Devo passarglieli come parametri alla creazione?
-      * Posso trovarmeli qua dentro perché il namespace è comune?
-      * Idem per tutte le variabili, eventi, locazioni, etc.
-      * utilizzate sia da tank che da valvole che da controllori.
-      */
-
       // Prendo gli eventi che arrivano dalla valvola.
-      //const std::set< DiscreteEvent >& input_events() const;
       set<DiscreteEvent> events = valve.input_events();
-
       set<DiscreteEvent>::iterator it = events.begin();
 
       // La seguente è come leggono in hybrid_io_automaton.cc l'evento dall'iteratore.
@@ -65,19 +56,15 @@ namespace Ariadne {
       // DiscreteEvent(input_event_it->name()
 
       DiscreteEvent close_event = DiscreteEvent(it->name());
-
       controller.add_output_event(close_event);
-
       it++;
-
       DiscreteEvent open_event = DiscreteEvent(it->name());
-
       controller.add_output_event(open_event);
 
       // 4. Registration of the locations
 
-      DiscreteLocation rising("rising" + Ariadne::to_string(progressive));
-      DiscreteLocation falling("falling" + Ariadne::to_string(progressive));
+      DiscreteLocation rising("rising" + number);
+      DiscreteLocation falling("falling" + number);
       controller.new_mode(rising);
       controller.new_mode(falling);
 

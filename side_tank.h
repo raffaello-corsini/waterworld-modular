@@ -35,15 +35,20 @@ namespace Ariadne {
     RealParameter lower_output_flow,
     int progressive)
     {
+
+      // Conversion of the progressive integer to a String.
+      String number = Ariadne::to_string(progressive);
+
       // Creation of the automaton, with the assigned label.
-      HybridIOAutomaton tank("tank" + Ariadne::to_string(progressive));
+      HybridIOAutomaton tank("tank" + number);
 
       // Adding the input/output vars.
       tank.add_input_var(upper_valvelevel);
       tank.add_output_var(internal_waterlevel);
 
       // Creation of the location.
-      DiscreteLocation side_tank_flow("flow" + Ariadne::to_string(progressive));
+      DiscreteLocation side_tank_flow("flow" + number);
+      
       // Adding the location to the automaton.
       tank.new_mode(side_tank_flow);
 
