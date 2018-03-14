@@ -69,5 +69,5 @@ int main(int argc,char *argv[])
     // cout << "\n----------- Stampa del'initial set inizializzato. \n" << initial_set << "\n-----------\n";
 
     // Runs the analysis routines set in the analysis.h file
-    analyse(system,initial_set,verb,plot_results);
+    // analyse(system,initial_set,verb,plot_results);
 }
