@@ -1,7 +1,8 @@
 /***************************************************************************
 *            valve_tank.h
 *
-*  These file is used to describe the valve of a watertank.
+*  These file is used to describe the valve of a watertank
+*  with unforced transitions.
 *
 *  Copyright  2018  Raffaello Corsini, Luca Geretti
 *
@@ -10,13 +11,7 @@
 /*
 #ifndef VALVE_H_
 #define VALVE_H_
-
-#ifndef TUTORIAL_SYSTEM_H_
-#define TUTORIAL_SYSTEM_H_
 */
-
-// Including this library to work with strings.
-// #include <string>
 
 #include <ariadne.h>
 

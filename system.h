@@ -171,6 +171,8 @@ namespace Ariadne {
       controller_counter++;
     }
 
+    /*
+
     // Compongo la tripletta modulare #0.
     HybridIOAutomaton semimodule0 = compose("tank0,valve0",tanks.at(0),valves.at(0),DiscreteLocation("flow0"),DiscreteLocation("idle_0"));
     HybridIOAutomaton module0 = compose("module0",semimodule0,controllers.at(0),DiscreteLocation("flow0,idle_0"),DiscreteLocation("rising0"));
@@ -184,22 +186,11 @@ namespace Ariadne {
     HybridIOAutomaton semimodulesystem = compose("semimodulesystem",module0,module1,DiscreteLocation("flow0,idle_0,rising0"),DiscreteLocation("flow1,idle_1,rising1"));
     HybridIOAutomaton modulesystem = compose("modulesystem",semimodulesystem,module2,DiscreteLocation("flow0,idle_0,rising0,flow1,idle_1,rising1"),DiscreteLocation("flow2,idle_2,rising2"));
 
-    /*
-    * Provo ora a comporre gli automi. Visto che l'ordine di composizione a
-    * livello teorico è irrilevante dovrei poter farlo unendo i componenti
-    * di ogni tipo alla mano. Provo a vederlo se posso aggiungere in maniera
-    * continuativa ogni elemento. Magari prima aggiungo ogni componente
-    * ad un unico vettore e poi scorro lungo tutto il vettore.
-    *
-    * Però posso anche comporre ogni tripletta e poi unire il tutto.
-    * Soprattutto per questo specifico caso perché si di avere 3-3-3
-    * e potrei rimanere fedele e regolare coi nomi.
     */
 
-    // Primo metodo.
-    HybridIOAutomaton temp1 = composition_all_pieces_by_type(tanks,valves,controllers);
-
     // Creo un vettore unico per eseguire il secondo metodo.
+    // Magari è il caso di creare una funzione che mi fa il merge di tre vettori.
+    // (O anche di un numero indefinito di vettori.)
     std::vector<HybridIOAutomaton> wholeVector;
     wholeVector.reserve( tanks.size() + valves.size() + controllers.size() ); // preallocate memory
     wholeVector.insert( wholeVector.end(), tanks.begin(), tanks.end() );
@@ -208,157 +199,18 @@ namespace Ariadne {
 
     // Secondo metodo.
     HybridIOAutomaton temp2 = composition_all_pieces_together(wholeVector);
-    // Terzo metodo.
-    HybridIOAutomaton temp3 = composition_of_subsystems(tanks,valves,controllers);
-    /*
-    // Iniziamo con un po' di stampe allegre per testare vari metodi.
-    cout << "Questa è la tank 0." << endl << tanks.at(0) << endl;
-    cout << "Questa è la funzione state_space()." << endl << tanks.at(0).state_space() << endl;
-    cout << "Questi sono i modi." << endl << tanks.at(0).modes() << endl;
-    cout << "Questo è il front() della list dei modi." << endl << tanks.at(0).modes().front() << endl;
-    cout << "Questo è la location() del front()." << endl << tanks.at(0).modes().front().location() << endl;
-    cout << "Questo è la name() della location()." << endl << tanks.at(0).modes().front().location().name() << endl;
-    cout << "---------------------------------" << endl;
-    // Valvole.
-    cout << "Questa è la valvola 0." << endl << valves.at(0) << endl;
-    cout << "Questa è la funzione state_space()." << endl << valves.at(0).state_space() << endl;
-    cout << "Questi sono i modi." << endl << valves.at(0).modes() << endl;
-    cout << "Questo è il front() della list dei modi." << endl << valves.at(0).modes().front() << endl;
-    cout << "Questo è la location() del front()." << endl << valves.at(0).modes().front().location() << endl;
-    cout << "Questo è la name() della location()." << endl << valves.at(0).modes().front().location().name() << endl;
-    cout << "---------------------------------" << endl;
-    // Controllore.
-    cout << "Questa è il controllore 0." << endl << controllers.at(0) << endl;
-    cout << "Questa è la funzione state_space()." << endl << controllers.at(0).state_space() << endl;
-    cout << "Questi sono i modi." << endl << controllers.at(0).modes() << endl;
-    cout << "Questo è il front() della list dei modi." << endl << controllers.at(0).modes().front() << endl;
-    cout << "Questo è la location() del front()." << endl << controllers.at(0).modes().front().location() << endl;
-    cout << "Questo è la name() della location()." << endl << controllers.at(0).modes().front().location().name() << endl;
-    cout << "---------------------------------" << endl;
 
+    /*
+    ofstream myfile;
+    myfile.open ("newfashionsystem.txt");
+    myfile << modulesystem;
+    myfile.close();
     */
 
-    /*
+    // Ritorno temp2 che è ottenuto col metodo più breve.
+    return temp2;
 
-    // Creo un automa vuoto.
-    HybridIOAutomaton dummy;
-
-    // Vedo se gli assegno un altro automa.
-    dummy = valves.at(0);
-    cout << "----------Stampa valvola-----------"  << endl;
-    cout << valves.at(0) << endl;
-    cout << "----------Stampa dummy-----------"  << endl;
-    cout << dummy << endl;
-
-    HybridIOAutomaton pippo = dummy;
-    cout << "----------Stampa pippo-----------"  << endl;
-    cout << pippo << endl;
-
-    cout << "----------Modifico dummy-----------"  << endl;
-    dummy = tanks.at(0);
-    cout << "----------Stampa pippo-----------"  << endl;
-    cout << pippo << endl;
-    cout << "----------Stampa dummy modificato-----------"  << endl;
-    cout << dummy << endl;
-
-    // Con queste stampe in sequenza vedo che se modifico una variabile
-    // che era stata assegnata a un'altra quest'ultima riferisce ancora all'originale.
-
-    */
-
-    /*
-    // Voglio vedere ora se funziona la composizione ricorsiva.
-    // Creo una tank fantoccio.
-    HybridIOAutomaton fantoccio = Ariadne::getSideTank(
-    waterlevels.at(0),
-    valvelevels.at(0),
-    valvelevels.at(2),
-    upperflows.at(0),
-    lowerflows.at(0),
-    // This int represents the number of this tank.
-    5
-  );
-  //cout << fantoccio << endl;
-
-  //cout << tanks.at(0) << endl;
-
-  // Creo una seconda tank fantoccio.
-  HybridIOAutomaton fantoccio2 = Ariadne::getValve(
-  // Valve's opening time.
-  T,
-  // Valve's opening level.
-  valvelevels.at(0),
-  // This int represents the number of this component.
-  6
-);
-// cout << fantoccio2 << endl;
-
-// cout << valves.at(0) << endl;
-
-// Provo ora la composizione ricorsiva.
-HybridIOAutomaton recursive = compose("tank5,valve6",fantoccio,fantoccio2,DiscreteLocation("flow5"),DiscreteLocation("idle_6"));
-
-cout << semimodule0 << endl << "----------------------" << endl << recursive << endl;
-
-fantoccio = compose("tank5,valve6",fantoccio,fantoccio2,DiscreteLocation("flow5"),DiscreteLocation("idle_6"));
-
-cout << "---------------" << endl << fantoccio << endl;
-
-*/
-
-/*
-
-String prova = Ariadne::to_string(semimodule0);
-
-cout << "Stampo prova con salvato semimodule0" << endl << prova << endl;
-
-cout << "---------------" << endl;
-
-easy_read_automaton(prova);
-
-cout << "Stampo prova con gli \", \" convertiti in \"\\n\"." << endl << prova << endl;
-
-cout << "---------------" << endl;
-
-*/
-
-//cout << temp1 << endl << "---" << endl << temp2 << endl << "---" << endl << temp3 << endl;
-
-// Vado a scrivere su file in maniera più leggibile i miei tre metodi.
-
-ofstream myfile;
-myfile.open ("metodo0.txt");
-String original = Ariadne::to_string(modulesystem);
-myfile << easy_read_automaton(original);
-myfile.close();
-myfile.open ("metodo1.txt");
-String a = Ariadne::to_string(temp1);
-myfile << easy_read_automaton(a);
-myfile.close();
-myfile.open ("metodo2.txt");
-String b = Ariadne::to_string(temp2);
-myfile << easy_read_automaton(b);
-myfile.close();
-myfile.open ("metodo3.txt");
-String c = Ariadne::to_string(temp3);
-myfile << easy_read_automaton(c);
-myfile.close();
-
-cout << "Alla fine esce che metodo0 = metodo3 e metodo1 = metodo2." << endl;
-
-
-/*
-ofstream myfile;
-myfile.open ("newfashionsystem.txt");
-myfile << modulesystem;
-myfile.close();
-*/
-
-// cout << modulesystem << endl;
-
-return modulesystem;
-
-}
+  }
 
 }
 

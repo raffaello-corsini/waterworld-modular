@@ -51,15 +51,17 @@ namespace Ariadne {
       set<DiscreteEvent> events = valve.input_events();
       set<DiscreteEvent>::iterator it = events.begin();
 
-      // La seguente è come leggono in hybrid_io_automaton.cc l'evento dall'iteratore.
-      // Io provo a riutilizzarlo tale e quale.
-      // DiscreteEvent(input_event_it->name()
-
+      // Recupero gli eventi e li salvo.
       DiscreteEvent close_event = DiscreteEvent(it->name());
       controller.add_output_event(close_event);
       it++;
       DiscreteEvent open_event = DiscreteEvent(it->name());
       controller.add_output_event(open_event);
+
+      /*
+       * La cosa qua sopra non si potrebbe fare meglio senza recuperare
+       * l'etichetta ma passandogli direttamente l'iteratore?
+       */
 
       // 4. Registration of the locations
 

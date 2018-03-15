@@ -11,9 +11,6 @@
 /*
 #ifndef SIDE_TANK_H_
 #define SIDE_TANK_H_
-
-#ifndef TUTORIAL_SYSTEM_H_
-#define TUTORIAL_SYSTEM_H_
 */
 
 #include <ariadne.h>
@@ -48,7 +45,7 @@ namespace Ariadne {
 
       // Creation of the location.
       DiscreteLocation side_tank_flow("flow" + number);
-      
+
       // Adding the location to the automaton.
       tank.new_mode(side_tank_flow);
 

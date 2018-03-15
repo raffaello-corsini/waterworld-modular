@@ -11,13 +11,7 @@
 /*
 #ifndef VALVE_H_
 #define VALVE_H_
-
-#ifndef TUTORIAL_SYSTEM_H_
-#define TUTORIAL_SYSTEM_H_
 */
-
-// Including this library to work with strings.
-// #include <string>
 
 #include <ariadne.h>
 
@@ -38,11 +32,9 @@ namespace Ariadne {
       // Creo un intero progressivo per etichettare il sistema.
       int progressive = 0;
 
-
       // Creo l'automa che restituirò alla fine.
       // Lo inizializzo con la prima tank.
       HybridIOAutomaton system = tanks.at(0);
-
 
       // Parto componendo tutte le tank rimanenti.
       for (int k = 1; k < tanks.size(); k++){
@@ -132,6 +124,8 @@ namespace Ariadne {
             "system_2_" + Ariadne::to_string(k),
             system,automata.at(k),
             system.modes().front().location(),
+            // Passare un vettore di coppie std::vector<pair<HybridIOAutomaton,DiscreteLocation>>
+            // Tengo traccia delle locazioni composte.
             automata.at(k).modes().front().location());
           }
 
@@ -202,8 +196,6 @@ namespace Ariadne {
               String easy_read_automaton(std::string& str) {
                 String from = ", ";
                 String to = "\n";
-                //if(from.empty())
-                //return;
                 size_t start_pos = 0;
                 while((start_pos = str.find(from, start_pos)) != std::string::npos) {
                   str.replace(start_pos, from.length(), to);
@@ -213,3 +205,5 @@ namespace Ariadne {
               }
 
             }
+
+            // Fare l'analisi con transizioni urgenti.

@@ -11,13 +11,7 @@
 /*
 #ifndef BOTTOM_TANK_H_
 #define BOTTOM_TANK_H_
-
-#ifndef TUTORIAL_SYSTEM_H_
-#define TUTORIAL_SYSTEM_H_
 */
-
-// Including this library to work with strings.
-// #include <string>
 
 #include <ariadne.h>
 
