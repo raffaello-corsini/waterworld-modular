@@ -10,13 +10,7 @@
 /*
 #ifndef CONTROLLER_H_
 #define CONTROLLER_H_
-
-#ifndef TUTORIAL_SYSTEM_H_
-#define TUTORIAL_SYSTEM_H_
 */
-
-// Including this library to work with strings.
-// #include <string>
 
 #include <ariadne.h>
 
@@ -52,10 +46,10 @@ namespace Ariadne {
       set<DiscreteEvent>::iterator it = events.begin();
 
       // Recupero gli eventi e li salvo.
-      DiscreteEvent close_event = DiscreteEvent(it->name());
+      DiscreteEvent close_event = *it;
       controller.add_output_event(close_event);
       it++;
-      DiscreteEvent open_event = DiscreteEvent(it->name());
+      DiscreteEvent open_event = *it;
       controller.add_output_event(open_event);
 
       /*

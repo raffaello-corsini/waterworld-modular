@@ -76,6 +76,8 @@ namespace Ariadne {
       valve.new_forced_transition(e_idle, closing, idle, rst_valvelevel_zero, valvelevel_leq_zero);
       valve.new_unforced_transition(e_open, idle, opening);
       valve.new_unforced_transition(e_close, idle, closing);
+      //valve.new_forced_transition(e_open, idle, opening);
+      //valve.new_forced_transition(e_close, idle, closing);
 
       return valve;
 

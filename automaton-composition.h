@@ -24,6 +24,8 @@ namespace Ariadne {
   *
   */
 
+  /*
+
   HybridIOAutomaton composition_all_pieces_by_type(
     std::vector<HybridIOAutomaton>& tanks,
     std::vector<HybridIOAutomaton>& valves,
@@ -104,6 +106,8 @@ namespace Ariadne {
       return system;
     }
 
+    */
+
     /*
     * Secondo modo di composizione.
     * Composizione per tipo di automa (tank, valvole, controllori).
@@ -138,6 +142,7 @@ namespace Ariadne {
         * Creo il vettore dove salvo gli automi parziali per poi alla fine
         * comporre tutti i sottoautomi risultanti.
         */
+        /*
         HybridIOAutomaton composition_of_subsystems(
           std::vector<HybridIOAutomaton>& tanks,
           std::vector<HybridIOAutomaton>& valves,
@@ -190,6 +195,7 @@ namespace Ariadne {
                 return system;
 
               }
+              */
 
               // A function to replace the occurrences of ", " in the automa
               // print with "\n".
@@ -206,4 +212,18 @@ namespace Ariadne {
 
             }
 
-            // Fare l'analisi con transizioni urgenti.
+            // A function to compose three vectors of HybridIOAutomaton.
+            std::vector<HybridIOAutomaton> merge_3_vectors(
+              std::vector<HybridIOAutomaton>& first,
+              std::vector<HybridIOAutomaton>& second,
+              std::vector<HybridIOAutomaton>& third){
+                std::vector<HybridIOAutomaton> result;
+                result.reserve( first.size() + second.size() + third.size() ); // preallocate memory
+                result.insert( result.end(), first.begin(), first.end() );
+                result.insert( result.end(), second.begin(), second.end() );
+                result.insert( result.end(), third.begin(), third.end() );
+                return result;
+              }
+
+
+              // Fare l'analisi con transizioni urgenti.

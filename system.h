@@ -38,12 +38,19 @@ namespace Ariadne {
     // Integer that counts the controllers.
     int controller_counter = 0;
 
+    // Creare un unico component counter,
+    // da resettare a zero ogni volta che
+    // si passa ad altri componenti.
+
     // Number of the tanks.
     int tank_number = 3;
     // Number of the valves.
     int valve_number = 3;
     // Number of the controllers.
     int controller_number = 3;
+
+    // Suppore di avere un identico numero
+    // di tank, valvole e controller?
 
     // 0: System variables
 
@@ -77,9 +84,9 @@ namespace Ariadne {
     upperflows.push_back(RealParameter("w0in",0.5));
     // Ingresso dell'entrata della watertank #w1, costante.
     upperflows.push_back(RealParameter("w1in",0.5));
-    // Uscita delle tank.
 
-    // Crep il vettore per i parametri di uscita.
+    // Uscita delle tank.
+    // Creo il vettore per i parametri di uscita.
     std::vector<RealParameter> lowerflows;
 
     lowerflows.push_back(RealParameter("tankOutputFlow0",0.04));
@@ -191,12 +198,16 @@ namespace Ariadne {
     // Creo un vettore unico per eseguire il secondo metodo.
     // Magari è il caso di creare una funzione che mi fa il merge di tre vettori.
     // (O anche di un numero indefinito di vettori.)
+
+    /*
     std::vector<HybridIOAutomaton> wholeVector;
     wholeVector.reserve( tanks.size() + valves.size() + controllers.size() ); // preallocate memory
     wholeVector.insert( wholeVector.end(), tanks.begin(), tanks.end() );
     wholeVector.insert( wholeVector.end(), valves.begin(), valves.end() );
     wholeVector.insert( wholeVector.end(), controllers.begin(), controllers.end() );
+    */
 
+    std::vector<HybridIOAutomaton> wholeVector = merge_3_vectors(tanks,valves,controllers);
     // Secondo metodo.
     HybridIOAutomaton temp2 = composition_all_pieces_together(wholeVector);
 
