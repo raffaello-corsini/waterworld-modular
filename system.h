@@ -20,6 +20,9 @@
 #ifndef TUTORIAL_SYSTEM_H_
 #define TUTORIAL_SYSTEM_H_
 
+#include <utility>      // std::pair, std::make_pair
+#include <iostream>     // std::cout
+
 #include <ariadne.h>
 #include "bottom_tank.h"
 #include "side_tank.h"
@@ -78,7 +81,11 @@ namespace Ariadne {
     std::vector<RealParameter> upperflows;
 
     // Creo il vettore per le tank.
-    std::vector<HybridIOAutomaton> tanks;
+    // std::vector<HybridIOAutomaton> tanks;
+
+    // NOVITÀ! Creo un unico vettore che conterrà tutti gli automi
+    // con la relativa locazione di partenza.
+    std::vector< pair<HybridIOAutomaton,DiscreteLocation> > mainVector;
 
     // Ingresso dell'entrata della watertank #w0, costante.
     upperflows.push_back(RealParameter("w0in",0.5));
@@ -105,7 +112,9 @@ namespace Ariadne {
         // This int represents the number of this tank.
         tank_counter
       );
-      tanks.push_back(local_tank);
+      pair<HybridIOAutomaton,DiscreteLocation> pair (local_tank, "flow" + Ariadne::to_string(k));
+
+      mainVector.push_back(pair);
       tank_counter++;
     }
 
@@ -122,7 +131,11 @@ namespace Ariadne {
       tank_counter
     );
 
-    tanks.push_back(real_bottom_tank);
+    pair<HybridIOAutomaton,DiscreteLocation> bottom_tank_pair (real_bottom_tank, DiscreteLocation("flow2"));
+
+    mainVector.push_back(bottom_tank_pair);
+
+    //tanks.push_back(real_bottom_tank);
 
     /// Valve automaton
 
@@ -132,7 +145,9 @@ namespace Ariadne {
 
     // 1. Automaton
 
-    std::vector<HybridIOAutomaton> valves;
+
+    // Commento questo vettore perché vado ad usare l'unico per tutto il sistema.
+    // std::vector<HybridIOAutomaton> valves;
 
     // Creo tre valvole con la funzione getValve.
 
@@ -145,7 +160,12 @@ namespace Ariadne {
         // This int represents the number of this component.
         valve_counter
       );
-      valves.push_back(valve);
+
+      pair<HybridIOAutomaton,DiscreteLocation> pair (valve, "idle_" + Ariadne::to_string(k));
+      //pair<HybridIOAutomaton,DiscreteLocation> pair (local_tank, "flow" + Ariadne::to_string(k));
+
+      mainVector.push_back(pair);
+
       valve_counter++;
     }
 
@@ -160,21 +180,28 @@ namespace Ariadne {
 
     // 1. Automata
 
-    std::vector<HybridIOAutomaton> controllers;
+    // Commento perché vado ad utilizzare un vettore di coppie unico.
+    // std::vector<HybridIOAutomaton> controllers;
 
-    // Creo tre valvole con la funzione getValve.
+    // Creo tre controllori con la funzione getController.
 
     for (int k = 0; k < controller_number; k++){
+
+      HybridIOAutomaton a = std::get<0>(mainVector.at(tank_number + k));
+
       HybridIOAutomaton controller = Ariadne::getController(
         // Controlled tank's waterlevel.
         waterlevels.at(k),
         hmin,hmax,delta,
         // Controlled tank's valve
-        valves.at(k),
+        std::get<0>(mainVector.at(tank_number + k)),
         // This int represents the number of this component.
         controller_counter
       );
-      controllers.push_back(controller);
+      pair<HybridIOAutomaton,DiscreteLocation> pair (controller, "rising" + Ariadne::to_string(k));
+
+      mainVector.push_back(pair);
+
       controller_counter++;
     }
 
@@ -207,9 +234,11 @@ namespace Ariadne {
     wholeVector.insert( wholeVector.end(), controllers.begin(), controllers.end() );
     */
 
-    std::vector<HybridIOAutomaton> wholeVector = merge_3_vectors(tanks,valves,controllers);
+    // Commento perché avendo già un vettore unico non ho più bisogno di
+    // una funzione che vada a farmi il merge dei vettori.
+    //std::vector<HybridIOAutomaton> wholeVector = merge_3_vectors(tanks,valves,controllers);
     // Secondo metodo.
-    HybridIOAutomaton system = composition_all_pieces_together(wholeVector);
+    HybridIOAutomaton system = composition_all_pieces_together(mainVector);
 
     /*
     ofstream myfile;
