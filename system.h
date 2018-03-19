@@ -209,7 +209,7 @@ namespace Ariadne {
 
     std::vector<HybridIOAutomaton> wholeVector = merge_3_vectors(tanks,valves,controllers);
     // Secondo metodo.
-    HybridIOAutomaton temp2 = composition_all_pieces_together(wholeVector);
+    HybridIOAutomaton system = composition_all_pieces_together(wholeVector);
 
     /*
     ofstream myfile;
@@ -218,8 +218,8 @@ namespace Ariadne {
     myfile.close();
     */
 
-    // Ritorno temp2 che è ottenuto col metodo più breve.
-    return temp2;
+    // Ritorno system che è ottenuto col metodo più breve.
+    return system;
 
   }
 
