@@ -71,4 +71,4 @@ namespace Ariadne {
 
     }
 
-    // Fare l'analisi con transizioni urgenti.
+    // Nel file system.h sostituire i counter per tipo con k dove possibile.

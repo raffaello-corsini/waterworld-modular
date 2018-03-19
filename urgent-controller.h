@@ -60,8 +60,8 @@ namespace Ariadne {
 
       // 5. Transitions
 
-      RealExpression waterlevel_geq_hmax = waterlevel - hmax; // x >= hmax - delta
-      RealExpression waterlevel_leq_hmin = hmin - waterlevel; // x <= hmin + delta
+      RealExpression waterlevel_geq_hmax = waterlevel - hmax;
+      RealExpression waterlevel_leq_hmin = hmin - waterlevel;
       controller.new_forced_transition(close_event, rising, falling, waterlevel_geq_hmax);
       controller.new_forced_transition(open_event, falling, rising, waterlevel_leq_hmin);
 
