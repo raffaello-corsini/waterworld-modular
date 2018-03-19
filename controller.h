@@ -52,20 +52,13 @@ namespace Ariadne {
       DiscreteEvent open_event = *it;
       controller.add_output_event(open_event);
 
-      /*
-       * La cosa qua sopra non si potrebbe fare meglio senza recuperare
-       * l'etichetta ma passandogli direttamente l'iteratore?
-       */
-
       // 4. Registration of the locations
-
       DiscreteLocation rising("rising" + number);
       DiscreteLocation falling("falling" + number);
       controller.new_mode(rising);
       controller.new_mode(falling);
 
       // 5. Transitions
-
       RealExpression waterlevel_leq_hmax = waterlevel - hmax - delta; // x <= hmax + delta
       RealExpression waterlevel_geq_hmin = hmin - delta - waterlevel; // x >= hmin - delta
       controller.new_invariant(rising, waterlevel_leq_hmax);

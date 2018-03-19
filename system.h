@@ -27,6 +27,7 @@
 #include "bottom_tank.h"
 #include "side_tank.h"
 #include "valve.h"
+#include "urgent-valve.h"
 #include "controller.h"
 #include "automaton-composition.h"
 
@@ -55,6 +56,10 @@ namespace Ariadne {
     // Suppore di avere un identico numero
     // di tank, valvole e controller?
 
+    // NOVITÀ! Creo un unico vettore che conterrà tutti gli automi
+    // con la relativa locazione di partenza.
+    std::vector< pair<HybridIOAutomaton,DiscreteLocation> > mainVector;
+
     // 0: System variables
 
     // Creo le variabili per i livelli d'acqua.
@@ -79,13 +84,6 @@ namespace Ariadne {
 
     // Creo il vettore per i parametri di input delle tank superiori.
     std::vector<RealParameter> upperflows;
-
-    // Creo il vettore per le tank.
-    // std::vector<HybridIOAutomaton> tanks;
-
-    // NOVITÀ! Creo un unico vettore che conterrà tutti gli automi
-    // con la relativa locazione di partenza.
-    std::vector< pair<HybridIOAutomaton,DiscreteLocation> > mainVector;
 
     // Ingresso dell'entrata della watertank #w0, costante.
     upperflows.push_back(RealParameter("w0in",0.5));
@@ -132,10 +130,7 @@ namespace Ariadne {
     );
 
     pair<HybridIOAutomaton,DiscreteLocation> bottom_tank_pair (real_bottom_tank, DiscreteLocation("flow2"));
-
     mainVector.push_back(bottom_tank_pair);
-
-    //tanks.push_back(real_bottom_tank);
 
     /// Valve automaton
 
@@ -145,14 +140,10 @@ namespace Ariadne {
 
     // 1. Automaton
 
-
-    // Commento questo vettore perché vado ad usare l'unico per tutto il sistema.
-    // std::vector<HybridIOAutomaton> valves;
-
     // Creo tre valvole con la funzione getValve.
 
     for (int k = 0; k < valve_number; k++){
-      HybridIOAutomaton valve = Ariadne::getValve(
+      HybridIOAutomaton valve = Ariadne::getUrgentValve(
         // Valve's opening time.
         T,
         // Valve's opening level.
@@ -162,10 +153,7 @@ namespace Ariadne {
       );
 
       pair<HybridIOAutomaton,DiscreteLocation> pair (valve, "idle_" + Ariadne::to_string(k));
-      //pair<HybridIOAutomaton,DiscreteLocation> pair (local_tank, "flow" + Ariadne::to_string(k));
-
       mainVector.push_back(pair);
-
       valve_counter++;
     }
 
@@ -180,14 +168,9 @@ namespace Ariadne {
 
     // 1. Automata
 
-    // Commento perché vado ad utilizzare un vettore di coppie unico.
-    // std::vector<HybridIOAutomaton> controllers;
-
     // Creo tre controllori con la funzione getController.
 
     for (int k = 0; k < controller_number; k++){
-
-      HybridIOAutomaton a = std::get<0>(mainVector.at(tank_number + k));
 
       HybridIOAutomaton controller = Ariadne::getController(
         // Controlled tank's waterlevel.
@@ -199,45 +182,11 @@ namespace Ariadne {
         controller_counter
       );
       pair<HybridIOAutomaton,DiscreteLocation> pair (controller, "rising" + Ariadne::to_string(k));
-
       mainVector.push_back(pair);
-
       controller_counter++;
     }
 
-    /*
-
-    // Compongo la tripletta modulare #0.
-    HybridIOAutomaton semimodule0 = compose("tank0,valve0",tanks.at(0),valves.at(0),DiscreteLocation("flow0"),DiscreteLocation("idle_0"));
-    HybridIOAutomaton module0 = compose("module0",semimodule0,controllers.at(0),DiscreteLocation("flow0,idle_0"),DiscreteLocation("rising0"));
-    // Compongo la tripletta modulare #1.
-    HybridIOAutomaton semimodule1 = compose("tank1,valve1",tanks.at(1),valves.at(1),DiscreteLocation("flow1"),DiscreteLocation("idle_1"));
-    HybridIOAutomaton module1 = compose("module1",semimodule1,controllers.at(1),DiscreteLocation("flow1,idle_1"),DiscreteLocation("rising1"));
-    // Compongo la tripletta modulare #0.
-    HybridIOAutomaton semimodule2 = compose("tank2,valve2",tanks.at(2),valves.at(2),DiscreteLocation("flow2"),DiscreteLocation("idle_2"));
-    HybridIOAutomaton module2 = compose("module2",semimodule2,controllers.at(2),DiscreteLocation("flow2,idle_2"),DiscreteLocation("rising2"));
-    // Compongo i tre automi.
-    HybridIOAutomaton semimodulesystem = compose("semimodulesystem",module0,module1,DiscreteLocation("flow0,idle_0,rising0"),DiscreteLocation("flow1,idle_1,rising1"));
-    HybridIOAutomaton modulesystem = compose("modulesystem",semimodulesystem,module2,DiscreteLocation("flow0,idle_0,rising0,flow1,idle_1,rising1"),DiscreteLocation("flow2,idle_2,rising2"));
-
-    */
-
-    // Creo un vettore unico per eseguire il secondo metodo.
-    // Magari è il caso di creare una funzione che mi fa il merge di tre vettori.
-    // (O anche di un numero indefinito di vettori.)
-
-    /*
-    std::vector<HybridIOAutomaton> wholeVector;
-    wholeVector.reserve( tanks.size() + valves.size() + controllers.size() ); // preallocate memory
-    wholeVector.insert( wholeVector.end(), tanks.begin(), tanks.end() );
-    wholeVector.insert( wholeVector.end(), valves.begin(), valves.end() );
-    wholeVector.insert( wholeVector.end(), controllers.begin(), controllers.end() );
-    */
-
-    // Commento perché avendo già un vettore unico non ho più bisogno di
-    // una funzione che vada a farmi il merge dei vettori.
-    //std::vector<HybridIOAutomaton> wholeVector = merge_3_vectors(tanks,valves,controllers);
-    // Secondo metodo.
+    // Compongo tutti gli automi per ottenere un unico sistema.
     HybridIOAutomaton system = composition_all_pieces_together(mainVector);
 
     /*
@@ -247,7 +196,7 @@ namespace Ariadne {
     myfile.close();
     */
 
-    // Ritorno system che è ottenuto col metodo più breve.
+    // Ritorno il sistema.
     return system;
 
   }
