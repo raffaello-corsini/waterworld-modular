@@ -27,7 +27,7 @@
 #include "bottom_tank.h"
 #include "side_tank.h"
 #include "valve.h"
-#include "urgent-valve.h"
+#include "urgent-controller.h"
 #include "controller.h"
 #include "automaton-composition.h"
 
@@ -143,7 +143,7 @@ namespace Ariadne {
     // Creo tre valvole con la funzione getValve.
 
     for (int k = 0; k < valve_number; k++){
-      HybridIOAutomaton valve = Ariadne::getUrgentValve(
+      HybridIOAutomaton valve = Ariadne::getValve(
         // Valve's opening time.
         T,
         // Valve's opening level.
@@ -172,10 +172,10 @@ namespace Ariadne {
 
     for (int k = 0; k < controller_number; k++){
 
-      HybridIOAutomaton controller = Ariadne::getController(
+      HybridIOAutomaton controller = Ariadne::getUrgentController(
         // Controlled tank's waterlevel.
         waterlevels.at(k),
-        hmin,hmax,delta,
+        hmin,hmax,//delta,
         // Controlled tank's valve
         std::get<0>(mainVector.at(tank_number + k)),
         // This int represents the number of this component.

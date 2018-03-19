@@ -36,13 +36,15 @@ namespace Ariadne {
        * nella composizione. L'altra locazione arriverà
        * dal vettore di coppie passato.
        */
-      // DiscreteLocation location = std::get<1>(mainVector.at(0));
+      DiscreteLocation location = std::get<1>(mainVector.at(0));
 
       // Vado ad aggiungere alla mano tutti gli altri elementi.
       for (unsigned int k = 1; k < mainVector.size(); k++){
         system = compose(
           "final_system_" + Ariadne::to_string(k),
           system,std::get<0>(mainVector.at(k)),
+          // Composizione delle etichette tenendo traccia,
+          // virgola come composizione.
           system.modes().front().location(),
           std::get<1>(mainVector.at(k)));
           // Come prendere la locazione da utilizzare nel tenere traccia?

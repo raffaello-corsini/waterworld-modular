@@ -17,13 +17,13 @@
 namespace Ariadne {
 
   // Posso passargli un automa? O meglio passargli solo la variabile?
-  HybridIOAutomaton getController(
+  HybridIOAutomaton getUrgentController(
     // Controlled tank's waterlevel.
     RealVariable waterlevel,
     // Parameter hmin, hmax, delta for the analysis.
     RealParameter hmin,
     RealParameter hmax,
-    RealParameter delta,
+    // RealParameter delta,
     // Controlled tank's valve
     HybridIOAutomaton valve,
     // This int represents the number of this component.
@@ -59,16 +59,11 @@ namespace Ariadne {
       controller.new_mode(falling);
 
       // 5. Transitions
-      RealExpression waterlevel_leq_hmax = waterlevel - hmax - delta; // x <= hmax + delta
-      RealExpression waterlevel_geq_hmin = hmin - delta - waterlevel; // x >= hmin - delta.
-      // Elimino le invarianti, elimino i delta, elimino le transizioni forzate.
-      controller.new_invariant(rising, waterlevel_leq_hmax);
-      controller.new_invariant(falling, waterlevel_geq_hmin);
-      RealExpression waterlevel_geq_hmax = waterlevel - hmax + delta; // x >= hmax - delta
-      RealExpression waterlevel_leq_hmin = hmin + delta - waterlevel; // x <= hmin + delta
-      // Le transizioni diventano forzate.
-      controller.new_unforced_transition(close_event, rising, falling, waterlevel_geq_hmax);
-      controller.new_unforced_transition(open_event, falling, rising, waterlevel_leq_hmin);
+
+      RealExpression waterlevel_geq_hmax = waterlevel - hmax; // x >= hmax - delta
+      RealExpression waterlevel_leq_hmin = hmin - waterlevel; // x <= hmin + delta
+      controller.new_forced_transition(close_event, rising, falling, waterlevel_geq_hmax);
+      controller.new_forced_transition(open_event, falling, rising, waterlevel_leq_hmin);
 
       return controller;
 
