@@ -18,11 +18,10 @@
 namespace Ariadne {
 
   /*
-  *  Function returning the desired automata. It takes in input a string which
-  *  is the label of the automata, the waterlevel, the two upper_waterlevel,
-  *  the upper_valvelevel, the two upper_output_flow and its internal_output_flow.
+  * Function returning the desired automata. It takes in input
+  * the waterlevel, the two upper_waterlevel, the upper_valvelevel,
+  * the two upper_output_flow and its internal_output_flow.
   */
-
   HybridIOAutomaton getBottomTank(
     RealVariable internal_waterlevel,
     RealVariable upper_left_waterlevel,
@@ -31,20 +30,18 @@ namespace Ariadne {
     RealParameter upper_left_output_flow,
     RealParameter upper_right_output_flow,
     RealParameter lower_output_flow,
-    int progressive)
-    {
+    int progressive){
 
       // Conversion of the progressive integer to a String.
       String number = Ariadne::to_string(progressive);
 
-      // Creation of the automaton, with the assigned label.
+      // Creation of the automaton, with a progressive label.
       HybridIOAutomaton tank("tank" + number);
 
       // Adding the input/output vars.
       tank.add_input_var(upper_valvelevel);
       tank.add_input_var(upper_left_waterlevel);
       tank.add_input_var(upper_right_waterlevel);
-
       tank.add_output_var(internal_waterlevel);
 
       // Creation of the location.

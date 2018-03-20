@@ -46,10 +46,9 @@ int main(int argc,char *argv[])
     // understand this when we specify sets, in order to avoid dimension mismatches.
     HybridBoundedConstraintSet initial_set(system.state_space());
 
-    // Costruisco lo stato iniziale da una locazione del sistema.
-
+    // Construction of the initial state from a location of the automaton.
     initial_set[DiscreteLocation("flow0,flow1,flow2,idle_0,idle_1,idle_2,rising0,rising1,rising2")]
-    // Le variabili in ordine alfabetico sono valveLevel 0-1-2, waterLevel 0-1-2.
+    // The variables' alphabetic order is valveLevel 0-1-2, waterLevel 0-1-2.
      = Box(6, 1.0,1.0 , 1.0,1.0 , 1.0,1.0 , 7.0,7.0 , 7.0,7.0 , 7.0,7.0);
 
     // Runs the analysis routines set in the analysis.h file

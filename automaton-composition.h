@@ -1,8 +1,10 @@
 /***************************************************************************
 *            automaton-composition.h
 *
-*  These file is used to describe different functions to compose
-*  an automaton made with
+*  These file is used to describe two functions.
+*  The most important one is automaton-composition,
+*  which compose a number n of automata in a single
+*  one.
 *
 *  Copyright  2018  Raffaello Corsini, Luca Geretti
 *
@@ -19,56 +21,54 @@
 
 namespace Ariadne {
 
-  // Composizione di tutti gli automi con locazione iniziale quella data.
+  // Composition of all the automata with the initial location given.
   HybridIOAutomaton composition_all_pieces_together(
     std::vector< pair<HybridIOAutomaton,DiscreteLocation> > mainVector){
 
       /*
-       * L'automa che restituirò alla fine.
-       * Gli assegno il primo elemento del vettore,
-       * supponendolo non vuoto.
-       */
+      * Creation of automaton returned by the function.
+      * It's initialised with the first one of the vector
+      * passed as argument.
+      */
       HybridIOAutomaton system = std::get<0>(mainVector.at(0));
 
       /*
-       * Creo la locazione dell'automa fin qui composto.
-       * La userò nel ciclo per indicarla come partenza
-       * nella composizione. L'altra locazione arriverà
-       * dal vettore di coppie passato.
-       */
+      * Creation of the location of the automaton composed until this point.
+      * I will use it inside the loop to indicate this as the starting
+      * location of the automaton..
+      */
       DiscreteLocation location = std::get<1>(mainVector.at(0));
 
-      // Vado ad aggiungere alla mano tutti gli altri elementi.
+      // Start of the loop to compose with all the other automata.
       for (unsigned int k = 1; k < mainVector.size(); k++){
         system = compose(
           "final_system_" + Ariadne::to_string(k),
           system,std::get<0>(mainVector.at(k)),
-          // Composizione delle etichette tenendo traccia,
-          // virgola come composizione.
-          system.modes().front().location(),
+          location,
           std::get<1>(mainVector.at(k)));
-          // Come prendere la locazione da utilizzare nel tenere traccia?
-          // Se io so che ho già un automa che ha come front una locazione regolare
-          // posso comunque prendere quella ?
-          //location = DiscreteLocation();
+          /*
+          * Update of the location desidered for the automaton
+          * composed until this point.
+          */
+          location = DiscreteLocation(location.name() + "," + std::get<1>(mainVector.at(k)).name());
         }
 
         return system;
       }
 
-      // A function to replace the occurrences of ", "
-      // in the automa print with "\n".
+      /*
+      * This is a function used to replace de occurences of ", "
+      * in the string view of an automata with "\n", in order to
+      * make easier the analysis.
+      */
+
       String easy_read_automaton(std::string& str) {
-        //String from = ", ";
-        //String to = "\n";
         size_t start_pos = 0;
         while((start_pos = str.find(", ", start_pos)) != std::string::npos) {
           str.replace(start_pos, 2, "\n");
-          start_pos += 1; // In case 'to' contains 'from', like replacing 'x' with 'yx'
+          start_pos += 1;
         }
         return str;
       }
 
     }
-
-    // Nel file system.h sostituire i counter per tipo con k dove possibile.

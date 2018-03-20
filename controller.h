@@ -1,7 +1,8 @@
 /***************************************************************************
 *            controller.h
 *
-*  These file is used to describe the valve of a watertank.
+*  These file is used to describe the controller of a valve on the top
+*  of a watertank. In this version there are non-urgent transitions.
 *
 *  Copyright  2018  Raffaello Corsini, Luca Geretti
 *
@@ -16,7 +17,6 @@
 
 namespace Ariadne {
 
-  // Posso passargli un automa? O meglio passargli solo la variabile?
   HybridIOAutomaton getController(
     // Controlled tank's waterlevel.
     RealVariable waterlevel,
@@ -41,11 +41,11 @@ namespace Ariadne {
 
       // 3. Registration of the events
 
-      // Prendo gli eventi che arrivano dalla valvola.
+      // Extraction of the events from the given valve.
       set<DiscreteEvent> events = valve.input_events();
       set<DiscreteEvent>::iterator it = events.begin();
 
-      // Recupero gli eventi e li salvo.
+      // Extraction and store of the single events.
       DiscreteEvent close_event = *it;
       controller.add_output_event(close_event);
       it++;
@@ -61,12 +61,10 @@ namespace Ariadne {
       // 5. Transitions
       RealExpression waterlevel_leq_hmax = waterlevel - hmax - delta; // x <= hmax + delta
       RealExpression waterlevel_geq_hmin = hmin - delta - waterlevel; // x >= hmin - delta.
-      // Elimino le invarianti, elimino i delta, elimino le transizioni forzate.
       controller.new_invariant(rising, waterlevel_leq_hmax);
       controller.new_invariant(falling, waterlevel_geq_hmin);
       RealExpression waterlevel_geq_hmax = waterlevel - hmax + delta; // x >= hmax - delta
       RealExpression waterlevel_leq_hmin = hmin + delta - waterlevel; // x <= hmin + delta
-      // Le transizioni diventano forzate.
       controller.new_unforced_transition(close_event, rising, falling, waterlevel_geq_hmax);
       controller.new_unforced_transition(open_event, falling, rising, waterlevel_leq_hmin);
 

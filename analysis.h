@@ -143,8 +143,6 @@ void infinite_time_outer_evolution(HybridAutomatonInterface& system, HybridBound
   HybridReachabilityAnalyser analyser(system,domain,accuracy);
   analyser.verbosity = verbosity;
 
-  std::cout << "Sto per fare l'analisi infinita outer." << endl << flush;
-
   // Performs the outer reach
   HybridDenotableSet reach = analyser.outer_chain_reach(initial_set);
 
@@ -173,8 +171,6 @@ void infinite_time_epsilon_lower_evolution(HybridAutomatonInterface& system, Hyb
   // Performs the lower reach, also outputting the obtained epsilon
   HybridDenotableSet reach;
   HybridFloatVector epsilon;
-
-  std::cout << "Sto per fare l'analisi infinita lower." << endl << flush;
 
   make_lpair<HybridDenotableSet,HybridFloatVector>(reach,epsilon) = analyser.epsilon_lower_chain_reach(initial_set);
 

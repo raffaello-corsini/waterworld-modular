@@ -1,5 +1,5 @@
 /***************************************************************************
-*            valve_tank.h
+*            valve.h
 *
 *  These file is used to describe the valve of a watertank
 *  with unforced transitions.
@@ -23,8 +23,7 @@ namespace Ariadne {
     // Valve's opening level.
     RealVariable valvelevel,
     // This int represents the number of this component.
-    int progressive)
-    {
+    int progressive){
 
       // Conversion of the progressive integer to a String.
       String number = Ariadne::to_string(progressive);

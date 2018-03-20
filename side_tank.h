@@ -18,20 +18,17 @@
 namespace Ariadne {
 
   /*
-  *  Function returning the desired automata. It takes in input a string which
-  *  is the label of the automata, the waterlevel, the two upper_waterlevel,
-  *  the upper_valvelevel, the two upper_output_flow and its internal_output_flow.
+  * Function returning the desired automata. It takes in input the waterlevel,
+  * the two upper_waterlevel, the upper_valvelevel, the two upper_output_flow
+  * and its internal_output_flow.
   */
-
-  // Posso passargli un automa? O meglio passargli solo la variabile?
   HybridIOAutomaton getSideTank(
     RealVariable internal_waterlevel,
     RealVariable upper_valvelevel,
     RealVariable lower_valvelevel,
     RealParameter upper_input_flow,
     RealParameter lower_output_flow,
-    int progressive)
-    {
+    int progressive){
 
       // Conversion of the progressive integer to a String.
       String number = Ariadne::to_string(progressive);

@@ -1,7 +1,8 @@
 /***************************************************************************
-*            controller.h
+*            urgent-controller.h
 *
-*  These file is used to describe the valve of a watertank.
+*  These file is used to describe the controller of a valve on the top
+*  of a watertank. In this version all the transitions are urgent.
 *
 *  Copyright  2018  Raffaello Corsini, Luca Geretti
 *
@@ -16,14 +17,13 @@
 
 namespace Ariadne {
 
-  // Posso passargli un automa? O meglio passargli solo la variabile?
   HybridIOAutomaton getUrgentController(
     // Controlled tank's waterlevel.
     RealVariable waterlevel,
     // Parameter hmin, hmax, delta for the analysis.
     RealParameter hmin,
     RealParameter hmax,
-    // RealParameter delta,
+    RealParameter delta,
     // Controlled tank's valve
     HybridIOAutomaton valve,
     // This int represents the number of this component.
@@ -41,11 +41,11 @@ namespace Ariadne {
 
       // 3. Registration of the events
 
-      // Prendo gli eventi che arrivano dalla valvola.
+      // Extraction of the events from the given valve.
       set<DiscreteEvent> events = valve.input_events();
       set<DiscreteEvent>::iterator it = events.begin();
 
-      // Recupero gli eventi e li salvo.
+      // Extraction and store of the single events.
       DiscreteEvent close_event = *it;
       controller.add_output_event(close_event);
       it++;
@@ -59,7 +59,6 @@ namespace Ariadne {
       controller.new_mode(falling);
 
       // 5. Transitions
-
       RealExpression waterlevel_geq_hmax = waterlevel - hmax;
       RealExpression waterlevel_leq_hmin = hmin - waterlevel;
       controller.new_forced_transition(close_event, rising, falling, waterlevel_geq_hmax);
