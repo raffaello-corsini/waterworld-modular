@@ -47,8 +47,8 @@ namespace Ariadne {
           location,
           std::get<1>(mainVector.at(k)));
           /*
-          * Update of the location desidered for the automaton
-          * composed until this point.
+          * Update of the location desidered for
+          * the automaton composed until this point.
           */
           location = DiscreteLocation(location.name() + "," + std::get<1>(mainVector.at(k)).name());
         }
@@ -61,7 +61,6 @@ namespace Ariadne {
       * in the string view of an automata with "\n", in order to
       * make easier the analysis.
       */
-
       String easy_read_automaton(std::string& str) {
         size_t start_pos = 0;
         while((start_pos = str.find(", ", start_pos)) != std::string::npos) {
