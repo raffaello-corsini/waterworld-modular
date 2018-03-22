@@ -1,27 +1,31 @@
 /***************************************************************************
 *            system.h
 *
-*  This file provides the system definition.
-*  Specifically, this is watertank system in which a tank with a hole in the
-*  bottom receives an input water flow. Such input flow can
-*  be modulated between zero and its maximum by controlling a valve. The
-*  described controller aims at keeping the water level between an upper threshold
-*  and a lower threshold.
-*
-*  Questo file contiene la definizione del sistema nelle sue variabili e componenti.
-*  Per altre informazioni si rimanda alla relazione allegata al presente progetto.
-*
-*  Questa è una versione preliminare con 2 flussi d'ingresso, 3 tank e 3 valvole.
+*  This file contains a function providing the desired system.
+*  Specifically, this is a watertank system with two side_tank on the top,
+*  one bottom_tank at the bottom and a valve on top of each of them.
+*  For every valve there is also a controller regulating its opening
+*  and closing.
 *
 *  Copyright  2018  Raffaello Corsini, Luca Geretti
 *
 ****************************************************************************/
 
-#ifndef TUTORIAL_SYSTEM_H_
-#define TUTORIAL_SYSTEM_H_
-
-//#include <utility>      // std::pair, std::make_pair
-//#include <iostream>     // std::cout
+/*
+*  This program is free software; you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation; either version 2 of the License, or
+*  (at your option) any later version.
+*
+*  This program is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU Library General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License
+*  along with this program; if not, write to the Free Software
+*  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+*/
 
 #include <ariadne.h>
 #include "bottom_tank.h"
@@ -45,12 +49,9 @@ namespace Ariadne {
     // Number of the controllers.
     int controller_number = 3;
 
-    // Suppore di avere un identico numero
-    // di tank, valvole e controller?
-
     /*
-    * Creation of a Vector of Pairs containing an automaton and
-    * its starting DiscreteLocation.
+    * Creation of a Vector of Pairs containing
+    * an automaton and its starting DiscreteLocation.
     */
     std::vector< pair<HybridIOAutomaton,DiscreteLocation> > mainVector;
 
@@ -68,7 +69,7 @@ namespace Ariadne {
       valvelevels.push_back(RealVariable("valveLevel" + Ariadne::to_string(k)));
     }
 
-    /// Tank automaton
+    /// Tank automata
 
     // 0: Parameters.
 
@@ -80,7 +81,6 @@ namespace Ariadne {
     // Store of the input of the watertank 1, constant.
     upperflows.push_back(RealParameter("w1in",0.5));
 
-    // Uscita delle tank.
     // Creation of a vector<RealParameter> for the tanks' output diameter.
     std::vector<RealParameter> lowerflows;
 
@@ -121,7 +121,7 @@ namespace Ariadne {
     pair<HybridIOAutomaton,DiscreteLocation> bottom_tank_pair (real_bottom_tank, DiscreteLocation("flow2"));
     mainVector.push_back(bottom_tank_pair);
 
-    /// Valve automaton
+    /// Valve automata
 
     // 0. Parameters
 
@@ -160,10 +160,10 @@ namespace Ariadne {
 
     // Creation of three controllers.
     for (int k = 0; k < controller_number; k++){
-      HybridIOAutomaton controller = Ariadne::getController(
+      HybridIOAutomaton controller = Ariadne::getUrgentController(
         // Controlled tank's waterlevel.
         waterlevels.at(k),
-        hmin,hmax,delta,
+        hmin,hmax,//delta,
         // Controlled tank's valve
         std::get<0>(mainVector.at(tank_number + k)),
         // This int represents the number of this component.
@@ -176,17 +176,8 @@ namespace Ariadne {
     // Composition of all the automata in order to get a single one.
     HybridIOAutomaton system = composition_all_pieces_together(mainVector);
 
-    /*
-    ofstream myfile;
-    myfile.open ("newfashionsystem.txt");
-    myfile << modulesystem;
-    myfile.close();
-    */
-
     return system;
 
   }
 
 }
-
-#endif /* TUTORIAL_SYSTEM_H_ */

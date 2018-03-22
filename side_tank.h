@@ -1,16 +1,28 @@
 /***************************************************************************
 *            side_tank.h
 *
-*  These file is used to describe the side_tank of a bi-dimensional pyramid
-*  of watertanks.
+*  These file is used to describe the side_tank of a bi-dimensional 2-level
+*  pyramid of watertanks. This is a tank with a costant input and an output
+*  that will flow into the bottom watertank.
 *
 *  Copyright  2018  Raffaello Corsini, Luca Geretti
 *
 ****************************************************************************/
 
 /*
-#ifndef SIDE_TANK_H_
-#define SIDE_TANK_H_
+*  This program is free software; you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation; either version 2 of the License, or
+*  (at your option) any later version.
+*
+*  This program is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU Library General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License
+*  along with this program; if not, write to the Free Software
+*  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 */
 
 #include <ariadne.h>

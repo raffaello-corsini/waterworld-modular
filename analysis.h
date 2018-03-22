@@ -4,7 +4,7 @@
 *  Provides a sequence of execution of analysis functions.
 *  For each one, the input data is prepared (apart from the common initial set).
 *
-*  Copyright  2017  Luca Geretti
+*  Copyright  2018  Raffaello Corsini, Luca Geretti
 *
 ****************************************************************************/
 
@@ -26,9 +26,6 @@
 
 #include "ariadne.h"
 
-#ifndef ANALYSIS_H_
-#define ANALYSIS_H_
-
 using namespace Ariadne;
 
 /// Forward declarations, used only to properly organize the source file
@@ -44,22 +41,25 @@ HybridConstraintSet getSafetyConstraint(HybridAutomatonInterface& system);
 // The main method for the analysis of the system
 // Since the analyses are independent, you may comment out any one if you want
 // to focus on specific ones.
-void analyse(HybridAutomatonInterface& system, HybridBoundedConstraintSet& initial_set, int verbosity, bool plot_results)
-{
+void analyse(HybridAutomatonInterface& system, HybridBoundedConstraintSet& initial_set, int verbosity, bool plot_results){
 
   cout << "1/6: Finite time upper evolution... " << endl << flush;
   finite_time_upper_evolution(system,initial_set,verbosity,plot_results);
 
+
   cout << "2/6: Finite time lower evolution... " << endl << flush;
   finite_time_lower_evolution(system,initial_set,verbosity,plot_results);
+
 
   /*
   cout << "3/6: Infinite time outer evolution... " << endl << flush;
   infinite_time_outer_evolution(system,initial_set,verbosity,plot_results);
   */
 
+
   cout << "4/6: Infinite time lower evolution... " << endl << flush;
   infinite_time_epsilon_lower_evolution(system,initial_set,verbosity,plot_results);
+
 
   /*
   cout << "5/6: Safety verification... " << endl << flush;
@@ -271,5 +271,3 @@ HybridConstraintSet getSafetyConstraint(HybridAutomatonInterface& system) {
   // Constructs a costraint set and then applies it to each location of the system
   return HybridConstraintSet(system.state_space(),ConstraintSet(cons_f,codomain));
 }
-
-#endif /* ANALYSIS_H_ */
